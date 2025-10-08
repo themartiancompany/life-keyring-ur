@@ -87,7 +87,7 @@ if [[ "${_git}" == "true" ]]; then
   _src="${_tarname}::git+${_url}#tag=${_tag}?signed"
   _sum='SKIP'
 elif [[ "${_git}" == "false" ]]; then
-  _src="${tarname}.tar.gz"
+  _src="${_tarname}.tar.gz"
   _sum="hurr"
 fi
 source=(
@@ -103,7 +103,7 @@ validpgpkeys=(
 
 build() {
   cd \
-    "${pkgname}" || \
+    "${_tarname}" || \
     exit
   make \
     build
@@ -111,7 +111,7 @@ build() {
 
 check() {
   cd \
-    "${pkgname}" || \
+    "${_tarname}" || \
     exit
   make \
     check
@@ -119,7 +119,7 @@ check() {
 
 package() {
   cd \
-    "${pkgname}" || \
+    "${_tarname}" || \
     exit
   # shellcheck disable=SC2154
   make \
