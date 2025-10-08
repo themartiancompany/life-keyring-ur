@@ -97,9 +97,14 @@ sha256sums=(
   "${_sum}"
 )
 validpgpkeys=(
-  # Pellegrino Prevete
-  '3D115DD206D92A0656C827BC8B686E3C22E4C2FA'
+  # Truocolo
+  #   <truocolo@0x6E5163fC4BFc1511Dbe06bB605cc14a3e462332b>
+  'F690CBC17BD1F53557290AF51FC17D540D0ADEED'
+  # Pellegrino Prevete (dvorak)
+  #   <dvorak@0x87003Bd6C074C713783df04f36517451fF34CBEf>
+  '12D8E3D7888F741E89F86EE0FEC8567A644F1D16'
 )
+
 
 build() {
   cd \
@@ -129,3 +134,4 @@ package() {
 }
 
 # vim:set sw=2 sts=-1 et:
+524dd3f60f6092366e880f38d65f6e85b88003746583bd566093bcc9724586f0  life-keyring-8fa658cf7a39c9042d216e198a9cf0cbfc868905.tar.gz
