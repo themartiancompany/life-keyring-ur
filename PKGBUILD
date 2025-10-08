@@ -82,18 +82,28 @@ checkdepends=(
   "${_py}-coverage"
   "${_py}-pytest"
 )
+source=()
+sha256sums=()
 _tarname="${_pkg}-${_commit}"
+_sum="524dd3f60f6092366e880f38d65f6e85b88003746583bd566093bcc9724586f0"
+_sig_sum="1a91dc3c2b14f723229941f462e3ec0b712a690c01650def3cfc4c114bbf2b89"
 if [[ "${_git}" == "true" ]]; then
   _src="${_tarname}::git+${_url}#tag=${_tag}?signed"
   _sum='SKIP'
 elif [[ "${_git}" == "false" ]]; then
   _src="${_tarname}.tar.gz"
-  _sum="hurr"
+  _sig_src="${_tarname}.tar.gz.sig"
+  source+=(
+    "${_sig_src}"
+  )
+  sha256sums+=(
+    "${_sig_sum}"
+  )
 fi
-source=(
+source+=(
   "${_src}"
 )
-sha256sums=(
+sha256sums+=(
   "${_sum}"
 )
 validpgpkeys=(
@@ -134,4 +144,3 @@ package() {
 }
 
 # vim:set sw=2 sts=-1 et:
-524dd3f60f6092366e880f38d65f6e85b88003746583bd566093bcc9724586f0  life-keyring-8fa658cf7a39c9042d216e198a9cf0cbfc868905.tar.gz
