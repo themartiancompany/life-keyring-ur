@@ -81,7 +81,7 @@ _tag="20260319"
 pkgver="${_tag}"
 _commit="05accdbd34af3244fd2f551cbca139a9bf6a5663"
 # "$(date +%Y.%m.%d)"
-pkgrel=2
+pkgrel=3
 _pkgdesc=(
   'Life PGP keyring.'
 )
