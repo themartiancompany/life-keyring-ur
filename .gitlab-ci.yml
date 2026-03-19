@@ -1,0 +1,195 @@
+---
+
+# SPDX-License-Identifier: AGPL-3.0
+
+#
+#    .gitlab-ci.yaml
+#
+#    ----------------------------------------------------------------------
+#    Copyright © 2022, 2023, 2024, 2025, 2026
+#                Pellegrino Prevete
+#
+#    All rights reserved
+#    ----------------------------------------------------------------------
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+default:
+  image: archlinux:latest
+
+stages:
+  - build
+
+variables:
+  PACKAGE_RELEASE: "${CI_COMMIT_TAG}"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic"
+
+.build:
+  stage: build
+  before_script:
+    - >
+      pacman-key \
+        --init
+    - >
+      pacman \
+        -Sy \
+        --needed \
+        --noconfirm \
+          archlinux-keyring
+    
+    - >  
+      export \
+        _os="$(
+          uname \
+            -o)"
+      export \
+        _packages=(
+          "bash"
+          "git"
+          "glab"
+          "jq"
+          "release-cli"
+          # debug
+          "inxi"
+          # extra
+          "asciidoctor"
+          "fakeroot"
+          "gnupg"
+          "make"
+          "nodejs-lts-jod"
+          "python"
+          "shfmt"
+       )
+      pacman \
+        -Su \
+        --needed \
+        --noconfirm \
+          "${_packages[@]}"
+
+    # Save private variables in the
+    # container
+    - >
+      mkdir \
+        -p \
+        "/root/.config/gitlab.com"
+      echo \
+        "${PACKAGE_REGISTRY_URL}"
+      echo \
+        "${GL_DL_PRIVATE_TOKEN}" > \
+        "/root/.config/gitlab.com/default.txt"
+      cp \
+        "/root/.config/gitlab.com/default.txt" \
+        "/root/.config/gitlab.com/${CI_PROJECT_NAMESPACE}.txt"
+      if [[ "${BUR_GPG_KEY}" == "" ]]; then
+        _msg=(
+          "Missing Bur GPG key."
+          "No artifacts or"
+          "releases will be produced."
+        )
+        echo \
+          "${_msg[*]}"
+      else 
+        echo \
+          "${BUR_GPG_KEY}" | \
+          base64 \
+            -d > \
+          "/root/bur.asc"
+        gpg \
+          --import \
+            "/root/bur.asc" || \
+          true
+      fi
+
+    # Setup user
+    - >
+      useradd \
+        "user"
+      mkdir \
+        -p \
+        "/home/user/ramdisk"
+      chmod \
+        700 \
+        "/home/user"
+      cp \
+        -r \
+        "/builds/${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}" \
+        "/home/user/${CI_PROJECT_NAME%-ur}"
+
+    # Setup ram disk
+    - >
+      _mem_free="$( \
+        free | \
+          grep \
+            "Mem:" | \
+          awk \
+            '{print $4}')"
+      echo \
+        "Free memory: '${_mem_free}'"
+      _ramdisk_size="$(( \
+        "${_mem_free}" / 3000 ))"
+      mount \
+        -o \
+          "size=${_ramdisk_size}M" \
+        -t \
+          "tmpfs" \
+        none \
+          "/home/user/ramdisk"
+      chown \
+        -R \
+        "user:user" \
+        "/home/user"
+      chmod \
+        700 \
+        "/home/user/ramdisk" 
+      mount
+  script:
+    - ./.gitlab/ci/build.sh ${BUILD_SCRIPT_ARGS}
+
+build:
+  artifacts:
+    paths:
+      - dogeos-gnu-*.pkg.tar.*
+    reports:
+      metrics: output/metrics.txt
+  extends: .build
+  parallel:
+    matrix:
+      - BUILD_SCRIPT_ARGS: arch x86_64 ${CI_PROJECT_NAMESPACE} ${CI_PROJECT_NAME} ${CI_PROJECT_ID} ${CI_COMMIT_SHA} ${CI_COMMIT_TAG} ${CI_JOB_TOKEN} ${PACKAGE_REGISTRY_URL}
+  rules:
+    - if:
+        $CI_COMMIT_TAG
+  interruptible: true
+
+.release:
+  extends: .build
+  after_script:
+    - ./.gitlab/ci/upload.sh ${BUILD_SCRIPT_ARGS}
+
+release:
+  artifacts:
+    reports:
+      metrics: output/metrics.txt
+    when: on_failure
+    paths:
+      - build-directory.tar.xz
+  stage: build
+  extends: .release
+  parallel:
+    matrix:
+      - BUILD_SCRIPT_ARGS: arch x86_64 ${CI_PROJECT_NAMESPACE} ${CI_PROJECT_NAME} ${CI_PROJECT_ID} ${CI_COMMIT_SHA} ${CI_COMMIT_TAG} ${CI_JOB_TOKEN} ${PACKAGE_REGISTRY_URL}
+  rules:
+    - if:
+        $CI_COMMIT_TAG
+  interruptible: true
