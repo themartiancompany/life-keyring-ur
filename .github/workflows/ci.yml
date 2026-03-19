@@ -706,7 +706,7 @@ jobs:
           Builds the package.
         run: |
           export \
-            _pkgbase"$( \
+            _pkgbase="$( \
               recipe-get \
                 "PKGBUILD" \
                 "pkgbase")"
