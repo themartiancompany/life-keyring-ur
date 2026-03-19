@@ -666,9 +666,10 @@ jobs:
       - name:
           Install docutils.
         run: |
-          pip \
-            install \
-              "docutils"
+          /entrypoint.sh \
+            pip \
+              install \
+                "docutils"
       - name:
           Read pkgbase.
         run: |

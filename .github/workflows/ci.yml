@@ -780,7 +780,7 @@ jobs:
           name:
             artifact-${{ matrix.platform }}-${{ matrix.architecture }}
           path:
-            python-docutils-${{ steps.version.outputs.version }}-any.pkg.tar.xz
+            life-keyring-${{ steps.version.outputs.version }}-any.pkg.tar.xz
       # - name:
       #     Upload Termux package.
       #   uses:
@@ -1277,6 +1277,13 @@ jobs:
             "user:user" \
             "$(pwd)"
       - name:
+          Install docutils
+        run: |
+          pacman \
+            -S \
+            --noconfirm \
+            "python-docutils"
+      - name:
           Installs latest Reallymakepkg.
         run: |
           git \
@@ -1287,7 +1294,7 @@ jobs:
           make \
             -C \
               "${HOME}/reallymakepkg-src" \
-            install
+            install-scripts
       - name:
           Installs latest Fur.
         run: |
@@ -1393,7 +1400,7 @@ jobs:
           name:
             artifact-${{ matrix.platform }}-${{ matrix.architecture }}
           path:
-            python-docutils-${{ steps.version.outputs.version }}-any.pkg.tar.xz
+            life-keyring-${{ steps.version.outputs.version }}-any.pkg.tar.xz
   msys2:
     name:
       Life and DogeOS Windows base packages (CI).
@@ -1643,7 +1650,7 @@ jobs:
           name:
             artifact-${{ matrix.sys }}-${{ matrix.env }}
           path:
-            python-docutils-${{ steps.version.outputs.version }}-any.pkg.tar.xz
+            "life-keyring-${{ steps.version.outputs.version }}-any.pkg.tar.xz"
   # This is the ideal way termux-docker would work with GHA.
   broken-ideal:
     name:
