@@ -81,7 +81,7 @@ _tag="20260319"
 pkgver="${_tag}"
 _commit="05accdbd34af3244fd2f551cbca139a9bf6a5663"
 # "$(date +%Y.%m.%d)"
-pkgrel=1
+pkgrel=2
 _pkgdesc=(
   'Life PGP keyring.'
 )
@@ -91,7 +91,7 @@ arch=(
 )
 _url="ssh://${_distro}_local_git/home/git/${_pkg}"
 _http="https://${_git_service}.com"
-url="${_http}/${_ns}/${_distro}"
+url="${_http}/${_ns}/${_pkg}"
 license=(
   'GPL3'
 )
@@ -118,12 +118,15 @@ checkdepends=(
 )
 source=()
 sha256sums=()
+_tag="${_commit}"
+_tag_name="commit"
+_url="${url}"
 _tarname="${_pkg}-${_commit}"
 _tarfile="${_tarname}.${_archive_format}"
-_gitlab_sum=""
-_gitlab_sig_sum=""
-_github_sum=""
-_github_sig_sum=""
+_gitlab_sum="skip"
+_gitlab_sig_sum="skip"
+_github_sum="skip"
+_github_sig_sum="skip"
 if [[ "${_git_http}" == "github" ]]; then
   _sum="${_github_sum}"
   _sig_sum="${_github_sig_sum}"
