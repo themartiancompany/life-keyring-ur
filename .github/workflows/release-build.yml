@@ -844,9 +844,9 @@ jobs:
             ${{ github.event.release.upload_url }}
             # ${{ steps.create_release.outputs.upload_url }}
           asset_path:
-            "gnupg-${{ steps.version.outputs.version }}-any.pkg.tar.xz"
+            "life-keyring-${{ steps.version.outputs.version }}-any.pkg.tar.xz"
           asset_name:
-            "gnupg-${{ steps.version.outputs.version }}-any.pkg.tar.xz"
+            "dogeos-android-life-keyring-${{ steps.version.outputs.version }}-any.pkg.tar.xz"
           asset_content_type:
             application/gzip
   arch_release:
@@ -1416,9 +1416,9 @@ jobs:
             ${{ github.event.release.upload_url }}
             # ${{ steps.create_release.outputs.upload_url }}
           asset_path:
-            "gnupg-${{ steps.version.outputs.version }}-any.pkg.tar.xz"
+            "life-keyring-${{ steps.version.outputs.version }}-any.pkg.tar.xz"
           asset_name:
-            "dogeos-gnu-gnupg-${{ steps.version.outputs.version }}-any.pkg.tar.xz"
+            "dogeos-gnu-life-keyring-${{ steps.version.outputs.version }}-any.pkg.tar.xz"
           asset_content_type:
             application/gzip
   msys2_release:
@@ -1717,9 +1717,9 @@ jobs:
             ${{ github.event.release.upload_url }}
             # ${{ steps.create_release.outputs.upload_url }}
           asset_path:
-            "gnupg-${{ steps.version.outputs.version }}-any.pkg.tar.xz"
+            "life-keyring-${{ steps.version.outputs.version }}-any.pkg.tar.xz"
           asset_name:
-            "dogeos-windows-gnupg-${{ steps.version.outputs.version }}-any.pkg.tar.xz"
+            "dogeos-windows-life-keyring-${{ steps.version.outputs.version }}-any.pkg.tar.xz"
           asset_content_type:
             application/gzip
 
